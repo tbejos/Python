@@ -1,5 +1,4 @@
 # Author: Txanton Bejos
-# Makes new mkv file with " - new" at end of name
 # Copies video and re-encode the audio to AAC with bitrate of 384 kb
 import os
 import subprocess
