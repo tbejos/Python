@@ -1,11 +1,15 @@
 # Author: Txanton Bejos
 import os
 
-for file in os.listdir(os.getcwd()):
-    if file.find("_") >= 0:
-        newName = file.replace("_", " ")
-        os.rename(file, newName)
-    elif file.find(".") > 0:
-        newName = file.replace(".", " ", file.count(".") - 1)
-        os.rename(file, newName)
+#Webrip
+badwords = ["x264", "x265", "BluRay", "YIFY"]
 
+for file in os.listdir(os.getcwd()):
+    newName = file
+    newName = newName.replace("_", " ")
+    newName = newName.replace("[", "").replace("]", "")
+    newName = newName.replace(".", " ", file.count(".") - 1)
+    for word in badwords:
+        newName = newName.replace(word, "")
+    newName = ' '.join(newName.split())
+    os.rename(file, newName)
