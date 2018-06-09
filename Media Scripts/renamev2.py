@@ -12,12 +12,14 @@ def run():
             print("***")
             print(dir)
             print("***")
-            start(dir)
+            # start(os.path.abspath(dir))
+            start(os.path.join(root, dir))
 
-# Webrip
-badwords = ["x264", "x265", "BluRay", "YIFY", "YTS AG", "YTS AM", "BrRip"]
+
+badwords = ["x264", "x265", "BluRay", "YIFY", "YTS AG", "YTS AM", "BrRip", "WEBRip"]
 pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
 res = re.compile(r'[0-9]{3,4}p')
+
 
 def start(path):
     print("###")
@@ -45,7 +47,7 @@ def start(path):
         if resol and newName.rfind(".") >= 0:
             newName = newName[:resol.end()] + pathlib.Path(file).suffix
         newName = ' '.join(newName.split())
-        os.rename(path + os.sep + file, path + os.sep + newName)
+        os.rename(os.path.join(path, file), os.path.join(path, newName))
         print(newName)
     print("###")
 
