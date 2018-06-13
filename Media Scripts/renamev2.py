@@ -16,7 +16,7 @@ def run():
             start(os.path.join(root, dir))
 
 
-badwords = ["x264", "x265", "BluRay", "YIFY", "YTS AG", "YTS AM", "BrRip", "WEBRip"]
+badwords = ["x264", "x265", "BluRay", "YIFY", "YTS AG", "YTS AM", "BrRip", "BRip", "WEBRip"]
 pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
 res = re.compile(r'[0-9]{3,4}p')
 
@@ -44,9 +44,10 @@ def start(path):
             newName = newName.replace(word, "")
         # Remove any trailing spaces between resolution and file extension
         resol = re.search(res, newName)
-        if resol and newName.rfind(".") >= 0:
-            newName = newName[:resol.end()] + pathlib.Path(file).suffix
-        newName = ' '.join(newName.split())
+        if resol and newName.rfind(".") > 0:
+            newName = newName[:resol.end()] + "." + pathlib.Path(file).suffix
+        while '  ' in newName:
+            newName = newName.replace('  ', ' ')
         os.rename(os.path.join(path, file), os.path.join(path, newName))
         print(newName)
     print("###")
