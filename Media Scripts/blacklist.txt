@@ -1,5 +1,8 @@
 x264
+H264
 x265
+H265
+WEBRip
 BluRay
 BrRip
 BRip
@@ -8,6 +11,6 @@ YTS AG
 YTS.AG
 YTS AM
 YTS.AM
-WEBRip
 GAZ
 INTERNAL
+RARBG
