@@ -7,11 +7,12 @@ import pathlib
 def run():
     spath = str(os.getcwd())
 
+    start(spath)
     for root, dirs, files in os.walk(spath):
         for dir in dirs:
-            print("***")
+            if dir[0] == "." or dir[0:2] == "__":
+                continue
             print(dir)
-            print("***")
             start(os.path.realpath(os.path.join(root, dir)))
 
 
@@ -21,17 +22,13 @@ blacklist = [line.rstrip('\n') for line in list]
 pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
 res = re.compile(r'[0-9]{3,4}p')
 
-badfiles = ['vtt', 'jpg', 'torrent']
+ignore = ['.txt', '.py', '.lnk', '.img']
 
 def start(path):
-    print("###")
     for file in os.listdir(path):
-        if file[0] == "." or file[0:2] == "__":
+        if file[0] == "." or file[0:2] == "__" or pathlib.Path(file).suffix in ignore:
             continue
-        print(file)
-
-        if pathlib.Path(file).suffix in badfiles:
-            os.remove(file)
+        print("---- " + file)
 
         newName = file
         newName = newName.replace("_", " ")
@@ -48,19 +45,17 @@ def start(path):
         newName = newName.replace(".", " ", file.count(".") - 1)
         for word in blacklist:
             newName = newName.replace(word, "")
-        # Remove any trailing spaces between resolution and file extension
-        resol = re.search(res, newName)
-        if resol and newName.rfind(".") > 0:
-            newName = newName[:resol.end()] + "." + pathlib.Path(file).suffix
 
         while '  ' in newName:
             newName = newName.replace('  ', ' ')
-        while '..' in newName:
-            newName = newName.replace('..', '.')
+
+        # Remove any trailing spaces between resolution and file extension
+        resol = re.search(res, newName)
+        if resol and newName.rfind(".") > 0:
+            newName = newName[:resol.end()] + pathlib.Path(file).suffix
 
         os.rename(os.path.join(path, file), os.path.join(path, newName))
-        print(newName)
-    print("###")
+        print("---- " + newName + "*")
 
 def main():
     run()
