@@ -7,21 +7,26 @@ import argparse
 
 # Argument Flags
 parser = argparse.ArgumentParser()
-parser.add_argument("--verbose", action='store_true', \
+parser.add_argument("--verbose", action='store_true',
     help="Output the files and changes")
-parser.add_argument("--test", '-t', action='store_true', \
+parser.add_argument("--test", '-t', action='store_true',
     help="Will run the script without renaming files, for use with verbose flag")
+parser.add_argument("--input", "-i",
+    help="Allow for passing in the " "destination source folder")
 args = parser.parse_args()
 
 # RegEx and Files/Filetypes
 list = open('blacklist.txt')
 blacklist = [line.rstrip('\n') for line in list]
-pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
-res = re.compile(r'[0-9]{3,4}p')
-ignore = ['.txt', '.py', '.lnk', '.img']
+pattern = re.compile('[\s.][0-9]{4}[\s.]')
+res = re.compile('[0-9]{3,4}?p')
+include = ['.mp4', '.srt', '.mkv', '.avi']
 
 def run():
-    spath = str(os.getcwd())
+    if args.input:
+        spath = str(args.input)
+    else:
+        spath = str(os.getcwd())
 
     start(spath)
     for root, dirs, files in os.walk(spath):
@@ -41,7 +46,7 @@ def run():
 
 def start(path):
     for file in os.listdir(path):
-        if file[0] == "." or file[0:2] == "__" or pathlib.Path(file).suffix in ignore:
+        if pathlib.Path(file).suffix not in include:
             continue
 
         newName = file
@@ -73,7 +78,6 @@ def start(path):
 
 def main():
     run()
-    print("Done.")
 
 if __name__ == "__main__":
     main()
