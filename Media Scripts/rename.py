@@ -3,6 +3,22 @@ _author__ =  "Txanton Bejos"
 import os
 import re
 import pathlib
+import argparse
+
+# Argument Flags
+parser = argparse.ArgumentParser()
+parser.add_argument("--verbose", action='store_true', \
+    help="Output the files and changes")
+parser.add_argument("--test", '-t', action='store_true', \
+    help="Will run the script without renaming files, for use with verbose flag")
+args = parser.parse_args()
+
+# RegEx and Files/Filetypes
+list = open('blacklist.txt')
+blacklist = [line.rstrip('\n') for line in list]
+pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
+res = re.compile(r'[0-9]{3,4}p')
+ignore = ['.txt', '.py', '.lnk', '.img']
 
 def run():
     spath = str(os.getcwd())
@@ -12,17 +28,16 @@ def run():
         for dir in dirs:
             if dir[0] == "." or dir[0:2] == "__":
                 continue
-            print(dir)
             start(os.path.realpath(os.path.join(root, dir)))
 
-
-list = open('blacklist.txt')
-blacklist = [line.rstrip('\n') for line in list]
-
-pattern = re.compile(r'.[0-9]{4}.')  # String of numbers length 4
-res = re.compile(r'[0-9]{3,4}p')
-
-ignore = ['.txt', '.py', '.lnk', '.img']
+        # Display Tree of Files
+        if args.verbose:
+            level = root.replace(spath, '').count(os.sep)
+            indent = ' ' * 4 * (level)
+            print('{}{}/'.format(indent, os.path.basename(root)))
+            subindent = ' ' * 4 * (level + 1)
+            for f in files:
+                print('{}{}'.format(subindent, f))
 
 def start(path):
     for file in os.listdir(path):
@@ -53,13 +68,12 @@ def start(path):
         if resol and newName.rfind(".") > 0:
             newName = newName[:resol.end()] + pathlib.Path(file).suffix
 
-        os.rename(os.path.join(path, file), os.path.join(path, newName))
-        if newName != file:
-            print("---- " + file)
-            print("---- " + newName + "*")
+        if not args.test:
+            os.rename(os.path.join(path, file), os.path.join(path, newName))
 
 def main():
     run()
+    print("Done.")
 
 if __name__ == "__main__":
     main()
