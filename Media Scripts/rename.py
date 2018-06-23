@@ -28,7 +28,6 @@ def start(path):
     for file in os.listdir(path):
         if file[0] == "." or file[0:2] == "__" or pathlib.Path(file).suffix in ignore:
             continue
-        print("---- " + file)
 
         newName = file
         newName = newName.replace("_", " ")
@@ -55,7 +54,9 @@ def start(path):
             newName = newName[:resol.end()] + pathlib.Path(file).suffix
 
         os.rename(os.path.join(path, file), os.path.join(path, newName))
-        print("---- " + newName + "*")
+        if newName != file:
+            print("---- " + file)
+            print("---- " + newName + "*")
 
 def main():
     run()
